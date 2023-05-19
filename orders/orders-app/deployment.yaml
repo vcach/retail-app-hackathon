@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: orders
-  namespace: orders
   labels:
     app.kubernetes.io/created-by: eks-hackathon-2023
     app.kubernetes.io/type: app
@@ -15,19 +14,12 @@ spec:
       app.kubernetes.io/component: service
   template:
     metadata:
-      annotations:
-        prometheus.io/path: /actuator/prometheus
-        prometheus.io/port: "8080"
-        prometheus.io/scrape: "true"
       labels:
         app.kubernetes.io/name: orders
         app.kubernetes.io/instance: orders
         app.kubernetes.io/component: service
         app.kubernetes.io/created-by: eks-hackathon-2023
     spec:
-      serviceAccountName: orders
-      securityContext:
-        fsGroup: 1000
       containers:
         - name: orders
           env:
@@ -36,44 +28,23 @@ spec:
             - name: SPRING_DATASOURCE_WRITER_URL
               valueFrom:
                 secretKeyRef:
-                  name: orders-db
-                  key: url
+                 #url?
             - name: SPRING_DATASOURCE_WRITER_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: orders-db
-                  key: username
             - name: SPRING_DATASOURCE_WRITER_PASSWORD
               valueFrom:
-                secretKeyRef:
-                  name: orders-db
-                  key: password
             - name: SPRING_DATASOURCE_READER_URL
               valueFrom:
-                secretKeyRef:
-                  name: orders-db
                   key: url
-            - name: SPRING_DATASOURCE_READER_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: orders-db
-                  key: username
-            - name: SPRING_DATASOURCE_READER_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: orders-db
-                  key: password
+            SPRING_DATASOURCE_READER_USERNAME
+              
+            SPRING_DATASOURCE_READER_PASSWORD
+              
           envFrom:
             - configMapRef:
                 name: orders
-          securityContext:
-            capabilities:
-              drop:
-              - ALL
-            readOnlyRootFilesystem: true
-            runAsNonRoot: true
-            runAsUser: 1000
-          image: "public.ecr.aws/aws-containers/retail-store-sample-orders:latest"
+          image: ""
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -91,7 +62,7 @@ spec:
               port: 8080
             successThreshold: 3
             periodSeconds: 5
-          resources:
+            resources:
             limits:
               memory: 1Gi
             requests:
@@ -100,6 +71,8 @@ spec:
           volumeMounts:
             - mountPath: /tmp
               name: tmp-volume
+      #nodeSelector:
+        #nodo: app
       volumes:
         - name: tmp-volume
           emptyDir:
