@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: ui
+  name: ui-hackathon-web
   labels:
     app.kubernetes.io/created-by: eks-hackathon-2023
 ---
@@ -21,19 +21,16 @@ data:
 apiVersion: v1
 kind: Service
 metadata:
-  name: ui-nlb
+  name: ui
   namespace: ui
   labels:
     app.kubernetes.io/created-by: eks-hackathon-2023
-  annotations:
-    service.beta.kubernetes.io/aws-load-balancer-type: external 
-    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
-    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
 spec:
   type: LoadBalancer
   ports:
     - port: 80
-      targetPort: 8080
+      targetPort: http
+      protocol: TCP
       name: http
   selector:
     app.kubernetes.io/name: ui
