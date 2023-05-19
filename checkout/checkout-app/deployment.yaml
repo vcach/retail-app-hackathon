@@ -5,6 +5,7 @@ metadata:
   labels:
     app.kubernetes.io/created-by: eks-workshop
     app.kubernetes.io/type: app
+  namespace: checkout 
 spec:
   replicas: 1
   selector:
@@ -14,29 +15,17 @@ spec:
       app.kubernetes.io/component: service
   template:
     metadata:
-      annotations:
-        prometheus.io/path: /metrics
-        prometheus.io/port: "8080"
-        prometheus.io/scrape: "true"
       labels:
         app.kubernetes.io/name: checkout
         app.kubernetes.io/instance: checkout
         app.kubernetes.io/component: service
         app.kubernetes.io/created-by: eks-workshop
     spec:
-      serviceAccountName: checkout
-      securityContext:
-        fsGroup: 1000
       containers:
         - name: checkout
           envFrom:
             - configMapRef:
                 name: checkout
-          securityContext:
-            capabilities:
-              drop:
-              - ALL
-            readOnlyRootFilesystem: true
           image: "public.ecr.aws/aws-containers/retail-store-sample-checkout:latest"
           imagePullPolicy: IfNotPresent
           ports:
