@@ -1,72 +1,57 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: catalog
+  name: catalog-mysql
   namespace: catalog
   labels:
     app.kubernetes.io/created-by: eks-hackathon-2023
-    app.kubernetes.io/type: app
+    app.kubernetes.io/team: database
 spec:
   replicas: 1
   selector:
     matchLabels:
       app.kubernetes.io/name: catalog
       app.kubernetes.io/instance: catalog
-      app.kubernetes.io/component: service
+      app.kubernetes.io/component: mysql
+  serviceName: mysql
   template:
     metadata:
-      labels:
+      labels: 
         app.kubernetes.io/name: catalog
         app.kubernetes.io/instance: catalog
-        app.kubernetes.io/component: service
+        app.kubernetes.io/component: mysql
         app.kubernetes.io/created-by: eks-hackathon-2023
+        app.kubernetes.io/team: database
     spec:
       containers:
-        - name: catalog
+        - name: mysql
+          image: "public.ecr.aws/docker/library/mysql:5.7"
+          args: 
+            - "--ignore-db-dir=lost+found"
+          imagePullPolicy: IfNotPresent
           env:
-            - name: DB_USER
+            - name: MYSQL_ROOT_PASSWORD
+              value: my-secret-pw
+            - name: MYSQL_USER
               valueFrom:
                 secretKeyRef:
                   name: catalog-db
                   key: username
-            - name: DB_PASSWORD
+            - name: MYSQL_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: catalog-db
                   key: password
-          envFrom:
-            - configMapRef:
-                name: catalog
-          image: "public.ecr.aws/aws-containers/retail-store-sample-catalog:latest"
-          imagePullPolicy: IfNotPresent
+            - name: MYSQL_DATABASE
+              value: catalog
           ports:
-            - name: http
-              containerPort: 8080
+            - name: mysql
+              containerPort: 3306
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 8080
-            initialDelaySeconds: 30
-            periodSeconds: 3
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: 8080
-            successThreshold: 3
-            periodSeconds: 5
-          resources:
-            limits:
-              memory: 512Mi
-            requests:
-              cpu: 250m
-              memory: 512Mi
           volumeMounts:
-            - mountPath: /tmp
-              name: tmp-volume
+            - name: data
+              mountPath: /var/lib/mysql
       #nodeSelector:
-        #nodo: app
       volumes:
-        - name: tmp-volume
-          emptyDir:
-            medium: Memory
+        - name: data
+          emptyDir: {}
