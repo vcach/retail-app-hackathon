@@ -15,19 +15,12 @@ spec:
       app.kubernetes.io/component: service
   template:
     metadata:
-      annotations:
-        prometheus.io/path: /metrics
-        prometheus.io/port: "8080"
-        prometheus.io/scrape: "true"
       labels:
         app.kubernetes.io/name: catalog
         app.kubernetes.io/instance: catalog
         app.kubernetes.io/component: service
         app.kubernetes.io/created-by: eks-hackathon-2023
     spec:
-      serviceAccountName: catalog
-      securityContext:
-        fsGroup: 1000
       containers:
         - name: catalog
           env:
@@ -44,13 +37,6 @@ spec:
           envFrom:
             - configMapRef:
                 name: catalog
-          securityContext:
-            capabilities:
-              drop:
-              - ALL
-            readOnlyRootFilesystem: true
-            runAsNonRoot: true
-            runAsUser: 1000
           image: "public.ecr.aws/aws-containers/retail-store-sample-catalog:latest"
           imagePullPolicy: IfNotPresent
           ports:
@@ -78,6 +64,8 @@ spec:
           volumeMounts:
             - mountPath: /tmp
               name: tmp-volume
+      #nodeSelector:
+        #nodo: app
       volumes:
         - name: tmp-volume
           emptyDir:
