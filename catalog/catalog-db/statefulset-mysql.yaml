@@ -51,6 +51,7 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /var/lib/mysql
+      #nodeSelector:
       volumes:
         - name: data
           emptyDir: {}
