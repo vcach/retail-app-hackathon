@@ -28,4 +28,4 @@ spec:
                 name: assets
           image: ""
           imagePullPolicy: IfNotPresent
-          #Incomplete yaml
+          #???? 
