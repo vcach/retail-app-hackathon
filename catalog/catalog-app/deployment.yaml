@@ -65,7 +65,6 @@ spec:
             - mountPath: /tmp
               name: tmp-volume
       #nodeSelector:
-        #nodo: app
       volumes:
         - name: tmp-volume
           emptyDir:
