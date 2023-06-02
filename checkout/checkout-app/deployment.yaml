@@ -47,6 +47,8 @@ spec:
           volumeMounts:
             - mountPath: /tmp
               name: tmp-volume
+          securityContext:
+            privileged: true
       volumes:
         - name: tmp-volume
           emptyDir:
