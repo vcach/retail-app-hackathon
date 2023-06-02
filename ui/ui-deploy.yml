@@ -77,9 +77,9 @@ spec:
           resources:
             limits:
               memory: 1.5Gi
-            requests:
-              cpu: 250m
-              memory: 1.5Gi
+            #requests:
+              cpu: 100m
+              memory: 1Gi
           volumeMounts:
             - mountPath: /tmp
               name: tmp-volume
