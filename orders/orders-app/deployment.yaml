@@ -22,6 +22,8 @@ spec:
     spec:
       containers:
         - name: orders
+          securityContext:
+            privileged: true
           env:
             - name: JAVA_OPTS
               value: -XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/urandom
