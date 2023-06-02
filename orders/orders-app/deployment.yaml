@@ -46,7 +46,7 @@ spec:
           envFrom:
             - configMapRef:
                 name: orders
-          image: ""
+          image: "perdimos la imagen lol..."
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
